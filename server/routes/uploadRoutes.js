@@ -10,9 +10,9 @@ router.post('/', protect, isAdmin, upload.single('image'), (req, res) => {
   }
   
   // Return the path that can be accessed by the frontend
-  // Backslashes (Windows) need to be replaced with forward slashes for URLs
-  const imagePath = `/${req.file.path.replace(/\\/g, '/')}`;
-  res.json({ success: true, url: `http://localhost:5000${imagePath}` });
+  const imagePath = `/uploads/${req.file.filename}`;
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  res.json({ success: true, url: `${baseUrl}${imagePath}` });
 });
 
 export default router;

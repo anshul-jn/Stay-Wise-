@@ -13,6 +13,7 @@ import recommendationRoutes from './routes/recommendationRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 dotenv.config();
 
@@ -38,7 +39,9 @@ app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Static folders
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const isProduction = process.env.NODE_ENV === 'production';
+const uploadDir = isProduction ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadDir));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
