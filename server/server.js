@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 
 // Route Imports
@@ -45,7 +46,13 @@ app.use('/uploads', express.static(uploadDir));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'StayWise.ai Server is running smoothly' });
+  res.json({
+    status: 'ok',
+    message: 'StayWise.ai Server is running smoothly',
+    dbConnected: mongoose.connection.readyState === 1,
+    hasMongoUri: !!process.env.MONGODB_URI,
+    nodeEnv: process.env.NODE_ENV
+  });
 });
 
 // Conditionally listen if not in a serverless production environment
