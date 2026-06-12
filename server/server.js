@@ -41,7 +41,7 @@ app.use('/api/upload', uploadRoutes);
 
 // Static folders
 const isProduction = process.env.NODE_ENV === 'production';
-const uploadDir = isProduction ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, 'uploads');
+const uploadDir = isProduction ? os.tmpdir() : path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadDir));
 
 // Health check endpoint

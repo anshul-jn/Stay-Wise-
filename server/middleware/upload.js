@@ -5,14 +5,16 @@ import os from 'os';
 
 // Determine the upload directory dynamically (Vercel has a read-only filesystem except /tmp)
 const isProduction = process.env.NODE_ENV === 'production';
-const uploadDir = isProduction ? path.join(os.tmpdir(), 'uploads') : 'uploads';
+const uploadDir = isProduction ? os.tmpdir() : 'uploads';
 
-try {
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+if (!isProduction) {
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+  } catch (err) {
+    console.warn('Warning: Could not create upload directory:', err.message);
   }
-} catch (err) {
-  console.warn('Warning: Could not create upload directory:', err.message);
 }
 
 const storage = multer.diskStorage({

@@ -5,31 +5,23 @@ let mongod = null;
 
 export const connectDB = async () => {
   try {
-    let dbUrl = process.env.MONGODB_URI;
-    let isInMemory = false;
-
-    if (!dbUrl) {
-      console.log('\n===================================================================');
-      console.log('⚠️  WARNING: STARTING IN-MEMORY MONGODB SERVER');
-      console.log('-------------------------------------------------------------------');
-      console.log('  Using mongodb-memory-server for local development.');
-      console.log('  CRITICAL: ALL REGISTERED USERS AND DATA WILL BE LOST WHEN THE SERVER RESTARTS.');
-      console.log('===================================================================\n');
-      
-      const { MongoMemoryServer } = await import('mongodb-memory-server');
-      mongod = await MongoMemoryServer.create();
-      dbUrl = mongod.getUri();
-      console.log(`In-memory MongoDB started at: ${dbUrl}`);
-      isInMemory = true;
-    }
+    console.log('\n===================================================================');
+    console.log('⚠️  WARNING: STARTING IN-MEMORY MONGODB SERVER');
+    console.log('-------------------------------------------------------------------');
+    console.log('  Using mongodb-memory-server for local development.');
+    console.log('  CRITICAL: ALL REGISTERED USERS AND DATA WILL BE LOST WHEN THE SERVER RESTARTS.');
+    console.log('===================================================================\n');
+    
+    const { MongoMemoryServer } = await import('mongodb-memory-server');
+    mongod = await MongoMemoryServer.create();
+    const dbUrl = mongod.getUri();
+    console.log(`In-memory MongoDB started at: ${dbUrl}`);
 
     await mongoose.connect(dbUrl);
     console.log('MongoDB connection established successfully.');
 
-    if (isInMemory) {
-      console.log('Seeding in-memory database with default data...');
-      await seedDB();
-    }
+    console.log('Seeding in-memory database with default data...');
+    await seedDB();
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
     process.exit(1);
