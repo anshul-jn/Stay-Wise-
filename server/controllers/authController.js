@@ -30,11 +30,11 @@ export const register = async (req, res) => {
       email,
       password,
       role: role || 'customer',
-      isVerified: false,
+      isVerified: true, // TEMPORARY FIX: Auto-verify users until SMTP is configured
       verificationToken,
       verificationTokenExpire
     });
-    console.log(`[Auth] User ${email} created successfully in DB (isVerified: false). Sending email...`);
+    console.log(`[Auth] User ${email} created successfully in DB (isVerified: true - Email verification temporarily bypassed). Sending mock email...`);
 
     // Send email
     const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email/${verificationToken}`;
@@ -79,9 +79,10 @@ export const login = async (req, res) => {
         return res.status(403).json({ success: false, message: 'No such admin exists' });
       }
 
+      // TEMPORARY FIX: Bypass email verification check until SMTP is fully configured
       if (!user.isVerified) {
-        console.warn(`[Auth Warning] Login failed: User ${email} has not verified their email.`);
-        return res.status(401).json({ success: false, message: 'Please verify your email first' });
+        console.warn(`[Auth Warning] User ${email} has not verified their email, but login is allowed temporarily.`);
+        // return res.status(401).json({ success: false, message: 'Please verify your email first' });
       }
 
       console.log(`[Auth] User ${email} logged in successfully.`);
