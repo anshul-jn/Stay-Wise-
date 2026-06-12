@@ -7,7 +7,10 @@ export const getRecommendations = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findById(userId);
+    let user = null;
+    if (userId !== 'guest') {
+      user = await User.findById(userId);
+    }
     const hotels = await Hotel.find({});
     
     // Fetch hotel minimum prices
